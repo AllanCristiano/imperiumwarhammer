@@ -1,0 +1,11 @@
+:host { display: block; min-height: 100svh; }
+
+main { display: block; }
+
+.site-footer {
+  padding: 2rem 16px calc(2rem + env(safe-area-inset-bottom));
+  text-align: center;
+  border-top: 1px solid rgb(255 255 255 / 0.06);
+  background: rgb(0 0 0 / 0.5);
+  p { margin: 0.3rem auto; max-width: 60ch; font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+}

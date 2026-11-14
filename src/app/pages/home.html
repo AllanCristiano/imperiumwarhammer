@@ -1,0 +1,96 @@
+<!-- HERO ---------------------------------------------------------------->
+<section class="hero">
+  <div class="hero-inner">
+    <app-emblem-3d class="aquila" glyph="aquila" [depth]="18" size="min(78vw, 420px)" style="view-transition-name: hero-aquila" />
+
+    <h1 class="title" aria-label="Imperium">
+      @for (c of title; track $index) {
+        <span [style.--i]="$index" aria-hidden="true">{{ c }}</span>
+      }
+    </h1>
+    <p class="kicker">da Humanidade</p>
+    <p class="lead">
+      No quadragésimo primeiro milênio, um império de um milhão de mundos resiste à escuridão. Conheça as forças que o
+      defendem.
+    </p>
+
+    <a class="cta" href="#faccoes">
+      <span>Explorar as facções</span>
+      <i aria-hidden="true"></i>
+    </a>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true"><span></span></div>
+</section>
+
+<!-- MANIFESTO -------------------------------------------------------------->
+<section class="manifesto">
+  <p appReveal class="m1">Não há paz entre as estrelas.</p>
+  <p appReveal="150" class="m2">Só existe <em>guerra</em>,</p>
+  <p appReveal="300" class="m3">e o eco de um trono dourado.</p>
+</section>
+
+<!-- CARROSSEL 3D ----------------------------------------------------------->
+<section id="faccoes" class="ring-section">
+  <header class="section-head" appReveal>
+    <span class="eyebrow">Arquivo Imperial</span>
+    <h2>As Forças do Imperium</h2>
+    <p>Arraste, toque ou use as setas. Toque no cartão central para abrir o dossiê.</p>
+  </header>
+  <app-ring-carousel [factions]="factions" />
+</section>
+
+<!-- NÚMEROS ----------------------------------------------------------------->
+<section class="numbers">
+  @for (n of numbers; track n.label; let i = $index) {
+    <div class="num" [appReveal]="i * 120">
+      <strong [appCounter]="n.value" [suffix]="n.suffix"></strong>
+      <span>{{ n.label }}</span>
+    </div>
+  }
+</section>
+
+<!-- GRADE (carregada sob demanda) ----------------------------------------->
+<section class="grid-section">
+  <header class="section-head" appReveal>
+    <span class="eyebrow">Dossiês</span>
+    <h2>Escolha seu destino</h2>
+  </header>
+
+  @defer (on viewport; prefetch on idle) {
+    <div class="grid">
+      @for (f of factions; track f.slug; let i = $index) {
+        <a
+          class="tile"
+          [routerLink]="['/faccao', f.slug]"
+          [appReveal]="(i % 2) * 120"
+          appTilt="10"
+          [style.--fc]="f.color"
+          [style.--fa]="f.accent"
+        >
+          <span class="glare" aria-hidden="true"></span>
+          <app-glyph class="tile-glyph" [name]="f.glyph" />
+          <span class="tile-num" aria-hidden="true">{{ (i + 1).toString().padStart(2, '0') }}</span>
+          <strong>{{ f.name }}</strong>
+          <em>{{ f.epithet }}</em>
+          <p>{{ f.summary }}</p>
+          <span class="go" aria-hidden="true">Abrir dossiê ›</span>
+        </a>
+      }
+    </div>
+  } @placeholder {
+    <div class="grid">
+      @for (f of factions; track f.slug) {
+        <div class="tile skeleton"></div>
+      }
+    </div>
+  }
+</section>
+
+<!-- CITAÇÃO ---------------------------------------------------------------->
+<section class="quote" appReveal>
+  <blockquote>
+    <app-typewriter text="Sou a última linha entre a humanidade e a escuridão. Eu não cairei." />
+  </blockquote>
+  <cite>— Ladainha das sentinelas</cite>
+</section>

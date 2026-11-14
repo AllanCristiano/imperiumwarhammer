@@ -1,0 +1,16 @@
+<app-starfield />
+
+@if (showIntro()) {
+  <app-intro (done)="introDone()" />
+}
+
+<app-nav />
+
+<main [attr.inert]="showIntro() ? '' : null">
+  <router-outlet />
+</main>
+
+<footer class="site-footer">
+  <p>Projeto de fã, não oficial e sem fins lucrativos. Warhammer 40,000 e nomes relacionados pertencem à Games Workshop.</p>
+  <p>Símbolos e textos deste site são criações originais inspiradas no universo.</p>
+</footer>

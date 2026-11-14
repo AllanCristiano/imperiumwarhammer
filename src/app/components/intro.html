@@ -1,0 +1,19 @@
+<div class="bar top"></div>
+<div class="bar bottom"></div>
+
+<div class="scan" aria-hidden="true"></div>
+
+<pre class="log" aria-live="polite">@for (l of lines(); track $index) {<span class="line" [style.--n]="l.length">{{ l }}</span>
+}<span class="caret">▮</span></pre>
+
+<div class="title" aria-hidden="true">
+  <app-glyph class="eagle" name="aquila" />
+  <h1>
+    @for (c of title; track $index) {
+      <span [style.--i]="$index">{{ c }}</span>
+    }
+  </h1>
+  <p>da Humanidade</p>
+</div>
+
+<button type="button" class="skip">Pular ›</button>

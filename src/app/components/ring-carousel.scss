@@ -1,0 +1,183 @@
+:host {
+  display: block;
+  position: relative;
+  outline: none;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow-x: clip;
+  padding-block: 1rem 0.5rem;
+}
+
+.viewport {
+  position: relative;
+  height: calc(var(--card) * 1.5);
+  perspective: 1100px;
+  perspective-origin: 50% 30%;
+  pointer-events: none; // só os cartões recebem toque (evita empate no hit-test 3D)
+}
+
+.ring {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--card);
+  height: calc(var(--card) * 1.32);
+  margin-left: calc(var(--card) / -2);
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.2, 0.75, 0.15, 1);
+}
+:host(.dragging) .ring { transition: none; cursor: grabbing; }
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  justify-items: center;
+  align-content: center;
+  padding: 14px 10px 16px;
+  border-radius: 6px;
+  color: var(--ink);
+  text-decoration: none;
+  background:
+    linear-gradient(170deg, color-mix(in oklab, var(--fc) 55%, #000) 0%, #0b0b10 75%);
+  border: 1px solid color-mix(in oklab, var(--fa) 30%, transparent);
+  box-shadow: 0 20px 40px rgb(0 0 0 / 0.55), inset 0 0 0 1px rgb(255 255 255 / 0.04);
+  backface-visibility: hidden;
+  overflow: hidden;
+  pointer-events: auto;
+  transition: filter 0.6s, border-color 0.6s, box-shadow 0.6s;
+  filter: brightness(0.45) saturate(0.7);
+  -webkit-tap-highlight-color: transparent;
+
+  &.active {
+    filter: none;
+    border-color: color-mix(in oklab, var(--fa) 75%, transparent);
+    box-shadow:
+      0 30px 60px rgb(0 0 0 / 0.6),
+      0 0 40px color-mix(in oklab, var(--fa) 30%, transparent);
+  }
+
+  &::before {
+    // moldura gótica interna
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid color-mix(in oklab, var(--fa) 22%, transparent);
+    clip-path: polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px));
+    pointer-events: none;
+  }
+}
+
+.shine {
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.14) 50%, transparent 60%);
+  transform: translateX(-60%);
+  pointer-events: none;
+}
+.card.active .shine { animation: shine 3.2s ease-in-out infinite; }
+
+.emblem { align-self: center; justify-self: center; }
+
+.name {
+  font: 700 clamp(0.95rem, 4.2vw, 1.2rem) var(--font-display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fa);
+}
+.epithet {
+  font: 500 0.72rem var(--font-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.floor {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(120%, 720px);
+  height: 40%;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--fa) 22%, transparent), transparent 70%);
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  max-width: 520px;
+  margin: 0.5rem auto 0;
+  padding-inline: 16px;
+}
+
+.arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--fa) 40%, transparent);
+  background: rgb(0 0 0 / 0.35);
+  color: var(--fa);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  &:active { transform: scale(0.9); }
+  &:hover { background: color-mix(in oklab, var(--fa) 15%, transparent); }
+}
+
+.caption {
+  display: grid;
+  text-align: center;
+  min-height: 3.2em;
+  strong {
+    font: 700 1.05rem var(--font-display);
+    letter-spacing: 0.1em;
+    animation: capIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  small {
+    font: italic 0.95rem var(--font-quote);
+    color: var(--muted);
+    animation: capIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
+  }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 0.9rem;
+  button {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    &::after {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      margin: auto;
+      transform: rotate(45deg);
+      background: rgb(255 255 255 / 0.25);
+      transition: background 0.3s, transform 0.3s;
+    }
+    &.on::after { background: var(--fa); transform: rotate(45deg) scale(1.5); }
+  }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-60%); }
+  60%, 100% { transform: translateX(60%); }
+}
+@keyframes capIn {
+  from { opacity: 0; transform: translateY(10px); filter: blur(4px); }
+}

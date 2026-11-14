@@ -1,0 +1,131 @@
+@for (f of [faction()]; track f.slug) {
+  <!-- HERO ------------------------------------------------------------>
+  <section class="hero">
+    <div class="beams" aria-hidden="true"><i></i><i></i><i></i></div>
+
+    <app-emblem-3d
+      class="emblem"
+      [glyph]="f.glyph"
+      [depth]="20"
+      size="min(70vw, 380px)"
+      [style.view-transition-name]="'emblem-' + f.slug"
+    />
+
+    <div class="hero-text">
+      <span class="eyebrow">Dossiê {{ (index() + 1).toString().padStart(2, '0') }} / {{ total.toString().padStart(2, '0') }}</span>
+      <h1 [attr.aria-label]="f.name">
+        @for (w of words(); track $index) {
+          <span class="word" aria-hidden="true">
+            @for (l of w; track l.i) {
+              <span [style.--i]="l.i">{{ l.c }}</span>
+            }
+          </span>
+        }
+      </h1>
+      <p class="epithet">{{ f.epithet }}</p>
+      <p class="motto">“{{ f.motto }}”</p>
+    </div>
+  </section>
+
+  <!-- RESUMO + CITAÇÃO ---------------------------------------------------->
+  <section class="intro">
+    <p class="summary" appReveal>{{ f.summary }}</p>
+    <blockquote appReveal="150">
+      <app-typewriter [text]="f.quote.text" />
+      <cite>— {{ f.quote.author }}</cite>
+    </blockquote>
+  </section>
+
+  <!-- LORE --------------------------------------------------------------->
+  <section class="lore">
+    @for (p of f.lore; track $index) {
+      <p [appReveal]="$index * 120" [class.dropcap]="$first">{{ p }}</p>
+    }
+  </section>
+
+  <!-- ATRIBUTOS ----------------------------------------------------------->
+  <section class="stats">
+    <header class="section-head" appReveal>
+      <span class="eyebrow">Análise tática</span>
+      <h2>Atributos</h2>
+    </header>
+
+    <div class="stats-grid">
+      @let r = radar();
+      <figure class="radar" appReveal #rv="reveal" [class.on]="rv.visible()">
+        <svg viewBox="-12 -6 124 112" role="img" [attr.aria-label]="'Radar de atributos de ' + f.name">
+          @for (g of r.grid; track $index) {
+            <polygon class="ring" [attr.points]="g" />
+          }
+          @for (a of r.axes; track a.label) {
+            <line class="axis" x1="50" y1="50" [attr.x2]="a.x" [attr.y2]="a.y" />
+            <text [attr.x]="a.lp.x" [attr.y]="a.lp.y">{{ a.label }}</text>
+          }
+          <polygon class="shape" [attr.points]="r.shape" />
+        </svg>
+        <figcaption>
+          Índice de poder
+          <strong [appCounter]="power()"></strong>
+        </figcaption>
+      </figure>
+
+      <ul class="bars">
+        @for (s of f.stats; track s.label; let i = $index) {
+          <li [appReveal]="i * 90" [style.--v]="s.value">
+            <span class="label">{{ s.label }}</span>
+            <span class="value" [appCounter]="s.value" [duration]="1400"></span>
+            <span class="track"><span class="fill"></span></span>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- FATOS --------------------------------------------------------------->
+  <section class="facts">
+    @for (x of f.facts; track x.label; let i = $index) {
+      <div class="fact" [appReveal]="i * 80" appTilt="8">
+        <span class="glare" aria-hidden="true"></span>
+        <small>{{ x.label }}</small>
+        <strong>{{ x.value }}</strong>
+      </div>
+    }
+  </section>
+
+  <!-- LINHA DO TEMPO (sob demanda) -------------------------------------->
+  <section class="timeline-section">
+    <header class="section-head" appReveal>
+      <span class="eyebrow">Crônicas</span>
+      <h2>Linha do tempo</h2>
+    </header>
+
+    @defer (on viewport; prefetch on idle) {
+      <ol class="timeline">
+        @for (e of f.timeline; track $index) {
+          <li [appReveal]="80" [class.right]="$odd">
+            <span class="era">{{ e.era }}</span>
+            <h3>{{ e.title }}</h3>
+            <p>{{ e.text }}</p>
+          </li>
+        }
+      </ol>
+    } @placeholder {
+      <div class="timeline-ph"></div>
+    }
+  </section>
+
+  <!-- NAVEGAÇÃO ------------------------------------------------------------>
+  <nav class="pager" aria-label="Outras facções">
+    @let p = prev();
+    @let n = next();
+    <a [routerLink]="['/faccao', p.slug]" class="prev" [style.--fa]="p.accent">
+      <small>‹ Anterior</small>
+      <strong>{{ p.short }}</strong>
+    </a>
+    <a routerLink="/" fragment="faccoes" class="home" aria-label="Voltar ao início">✦</a>
+    <a [routerLink]="['/faccao', n.slug]" class="next" [style.--fa]="n.accent">
+      <small>Próxima ›</small>
+      <strong>{{ n.short }}</strong>
+    </a>
+  </nav>
+}
