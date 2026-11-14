@@ -73,16 +73,24 @@ async function shot(page, name) {
 
 /** Grava quadros por `ms` e salva como GIF (atrasos reais entre quadros). */
 async function record(page, name, ms, { fps = 12, during } = {}) {
+  // Screencast do DevTools: o próprio Chrome envia os quadros pintados,
+  // bem mais fluido do que tirar screenshots em loop.
+  const cdp = await page.createCDPSession();
   const frames = [];
-  const start = Date.now();
-  const action = during?.();
-  while (Date.now() - start < ms) {
+  const minGap = 1000 / fps;
+  cdp.on('Page.screencastFrame', ({ data, sessionId }) => {
     const t = Date.now();
-    frames.push({ buf: await page.screenshot({ type: 'png' }), t });
-    const wait = 1000 / fps - (Date.now() - t);
-    if (wait > 0) await sleep(wait);
-  }
+    const last = frames.at(-1);
+    if (!last || t - last.t >= minGap) frames.push({ buf: Buffer.from(data, 'base64'), t });
+    cdp.send('Page.screencastFrameAck', { sessionId }).catch(() => {});
+  });
+  await cdp.send('Page.startScreencast', { format: 'png', everyNthFrame: 1 });
+
+  const action = during?.();
+  await sleep(ms);
   await action;
+  await cdp.send('Page.stopScreencast');
+  await cdp.detach();
 
   const gif = GIFEncoder();
   frames.forEach((f, i) => {
@@ -102,7 +110,8 @@ console.log(`Capturando ${BASE} com ${CHROME}\n`);
 // ---------- PNG mobile ----------
 {
   const { page, close } = await open('/', MOBILE, { intro: true });
-  await sleep(4600);
+  await page.waitForSelector('app-intro[data-phase="title"]');
+  await sleep(2000);
   await shot(page, 'mobile-abertura.png');
   await close();
 }
@@ -155,7 +164,7 @@ console.log(`Capturando ${BASE} com ${CHROME}\n`);
 // ---------- GIFs ----------
 {
   const { page, close } = await open('/', MOBILE_GIF, { intro: true });
-  await record(page, 'abertura.gif', 6200, { fps: 10 });
+  await record(page, 'abertura.gif', 7600, { fps: 10 });
   await close();
 }
 {
