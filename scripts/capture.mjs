@@ -67,7 +67,7 @@ async function scrollTo(page, selector, offset = 0) {
 }
 
 async function shot(page, name) {
-  await page.screenshot({ path: file(name) });
+  await page.screenshot({ path: file(name), type: 'jpeg', quality: 88 });
   console.log('  ✔', name);
 }
 
@@ -112,35 +112,35 @@ console.log(`Capturando ${BASE} com ${CHROME}\n`);
   const { page, close } = await open('/', MOBILE, { intro: true });
   await page.waitForSelector('app-intro[data-phase="title"]');
   await sleep(2000);
-  await shot(page, 'mobile-abertura.png');
+  await shot(page, 'mobile-abertura.jpg');
   await close();
 }
 {
   const { page, close } = await open('/', MOBILE);
   await sleep(3000);
-  await shot(page, 'mobile-inicio.png');
+  await shot(page, 'mobile-inicio.jpg');
 
   await scrollTo(page, '#faccoes', -60);
   await sleep(2200);
-  await shot(page, 'mobile-carrossel.png');
+  await shot(page, 'mobile-carrossel.jpg');
 
   await page.click('.burger');
   await sleep(1500);
-  await shot(page, 'mobile-menu.png');
+  await shot(page, 'mobile-menu.jpg');
   await close();
 }
 {
   const { page, close } = await open('/faccao/adeptus-mechanicus', MOBILE);
   await sleep(2600);
-  await shot(page, 'mobile-faccao.png');
+  await shot(page, 'mobile-faccao.jpg');
 
   await scrollTo(page, '.stats', -20);
   await sleep(2400);
-  await shot(page, 'mobile-atributos.png');
+  await shot(page, 'mobile-atributos.jpg');
 
   await scrollTo(page, '.timeline-section', -40);
   await sleep(2200);
-  await shot(page, 'mobile-linha-do-tempo.png');
+  await shot(page, 'mobile-linha-do-tempo.jpg');
   await close();
 }
 
@@ -148,16 +148,16 @@ console.log(`Capturando ${BASE} com ${CHROME}\n`);
 {
   const { page, close } = await open('/', DESKTOP);
   await sleep(3000);
-  await shot(page, 'desktop-inicio.png');
+  await shot(page, 'desktop-inicio.jpg');
   await scrollTo(page, '#faccoes', -40);
   await sleep(2200);
-  await shot(page, 'desktop-carrossel.png');
+  await shot(page, 'desktop-carrossel.jpg');
   await close();
 }
 {
   const { page, close } = await open('/faccao/adeptus-custodes', DESKTOP);
   await sleep(2600);
-  await shot(page, 'desktop-faccao.png');
+  await shot(page, 'desktop-faccao.jpg');
   await close();
 }
 
