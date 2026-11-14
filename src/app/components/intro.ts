@@ -76,6 +76,8 @@ export class IntroComponent {
   }
 
   protected skip(): void {
+    // Já saindo: não cancela o timer que chama finish(), senão a abertura trava.
+    if (this.phase() === 'out') return;
     this.timers.forEach(clearTimeout);
     this.leave();
   }

@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "capture": "node scripts/capture.mjs"
+    "capture": "node scripts/capture.mjs",
+    "test:ci": "ng test --watch=false"
   },
   "private": true,
   "packageManager": "npm@12.1.0",

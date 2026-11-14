@@ -27,7 +27,9 @@ describe('NavComponent', () => {
   it('lista todas as facções com link', async () => {
     const { el } = await setup();
     const links = [...el.querySelectorAll<HTMLAnchorElement>('#drawer a')];
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(FACTIONS.map((f) => `/faccao/${f.slug}`));
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(
+      FACTIONS.map((f) => `/faccao/${f.slug}`),
+    );
   });
 
   it('começa fechada, com a gaveta inerte', async () => {

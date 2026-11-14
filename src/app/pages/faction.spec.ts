@@ -43,12 +43,19 @@ describe('FactionPage', () => {
     const f = FACTIONS[1];
     expect(el.querySelectorAll('.radar .axis')).toHaveLength(f.stats.length);
     expect(el.querySelectorAll('.radar .ring')).toHaveLength(4);
-    expect(el.querySelector('.radar .shape')?.getAttribute('points')?.split(' ')).toHaveLength(f.stats.length);
+    expect(el.querySelector('.radar .shape')?.getAttribute('points')?.split(' ')).toHaveLength(
+      f.stats.length,
+    );
   });
 
   it('o primeiro vértice do radar aponta para cima, proporcional ao valor', () => {
     const [first] = FACTIONS[1].stats;
-    const [x, y] = el.querySelector('.radar .shape')!.getAttribute('points')!.split(' ')[0].split(',').map(Number);
+    const [x, y] = el
+      .querySelector('.radar .shape')!
+      .getAttribute('points')!
+      .split(' ')[0]
+      .split(',')
+      .map(Number);
     expect(x).toBeCloseTo(50, 1);
     expect(y).toBeCloseTo(50 - (40 * first.value) / 100, 1);
   });
@@ -62,9 +69,13 @@ describe('FactionPage', () => {
 
   it('dá a volta nas pontas da lista (anterior da primeira = última)', async () => {
     await render(FACTIONS[0].slug);
-    expect(el.querySelector('.pager .prev')?.getAttribute('href')).toBe(`/faccao/${FACTIONS.at(-1)!.slug}`);
+    expect(el.querySelector('.pager .prev')?.getAttribute('href')).toBe(
+      `/faccao/${FACTIONS.at(-1)!.slug}`,
+    );
     await render(FACTIONS.at(-1)!.slug);
-    expect(el.querySelector('.pager .next')?.getAttribute('href')).toBe(`/faccao/${FACTIONS[0].slug}`);
+    expect(el.querySelector('.pager .next')?.getAttribute('href')).toBe(
+      `/faccao/${FACTIONS[0].slug}`,
+    );
   });
 
   it('retinge o tema global com as cores da facção', async () => {

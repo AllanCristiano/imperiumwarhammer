@@ -23,7 +23,15 @@ describe('FACTIONS (integridade dos dados)', () => {
     });
 
     it('preenche os textos obrigatórios', () => {
-      for (const text of [f.name, f.short, f.epithet, f.motto, f.summary, f.quote.text, f.quote.author]) {
+      for (const text of [
+        f.name,
+        f.short,
+        f.epithet,
+        f.motto,
+        f.summary,
+        f.quote.text,
+        f.quote.author,
+      ]) {
         expect(text.trim()).not.toBe('');
       }
       expect(f.lore.length).toBeGreaterThan(0);
@@ -41,7 +49,7 @@ describe('FACTIONS (integridade dos dados)', () => {
     it('tem fatos e linha do tempo preenchidos', () => {
       expect(f.facts.length).toBeGreaterThan(0);
       expect(f.timeline.length).toBeGreaterThan(0);
-      for (const e of f.timeline) expect(e.era).toMatch(/^M\d+$/);
+      for (const e of f.timeline) expect(e.era).toMatch(/^M\d+(–M\d+)?$/);
     });
   });
 });
@@ -52,7 +60,10 @@ describe('findFaction', () => {
     expect(findFaction(first.slug)).toBe(first);
   });
 
-  it.each([null, undefined, '', 'nao-existe', 'ADEPTUS-ASTARTES'])('retorna undefined para %j', (slug) => {
-    expect(findFaction(slug)).toBeUndefined();
-  });
+  it.each([null, undefined, '', 'nao-existe', 'ADEPTUS-ASTARTES'])(
+    'retorna undefined para %j',
+    (slug) => {
+      expect(findFaction(slug)).toBeUndefined();
+    },
+  );
 });

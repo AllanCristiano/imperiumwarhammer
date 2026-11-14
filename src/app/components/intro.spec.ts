@@ -7,11 +7,11 @@ describe('IntroComponent', () => {
   let fixture: ComponentFixture<IntroComponent>;
   let done: ReturnType<typeof vi.fn<() => void>>;
 
-  async function create() {
+  function create() {
     fixture = TestBed.createComponent(IntroComponent);
     done = vi.fn<() => void>();
     fixture.componentInstance.done.subscribe(done);
-    await fixture.whenStable();
+    fixture.detectChanges(); // whenStable() trava com timers falsos
   }
 
   const phase = () => fixture.nativeElement.getAttribute('data-phase');
@@ -20,17 +20,18 @@ describe('IntroComponent', () => {
   afterEach(() => vi.useRealTimers());
 
   it('é um diálogo acessível', async () => {
-    await create();
+    create();
     expect(fixture.nativeElement.getAttribute('role')).toBe('dialog');
     expect(fixture.nativeElement.getAttribute('aria-label')).toBe('Abertura');
   });
 
   it('roda a sequência completa boot → title → out → done', async () => {
-    await create();
+    create();
     const warp = TestBed.inject(MotionService).warp;
     expect(phase()).toBe('boot');
 
-    vi.advanceTimersByTime(3000);
+    // 4 linhas: 500 + 520 + 580 + 640 + 700 = 2940ms; título 400ms depois, saída 3600ms depois.
+    vi.advanceTimersByTime(3340);
     fixture.detectChanges();
     expect(phase()).toBe('title');
     expect(done).not.toHaveBeenCalled();
@@ -45,7 +46,7 @@ describe('IntroComponent', () => {
   });
 
   it('clique pula a cena e emite done uma única vez', async () => {
-    await create();
+    create();
     fixture.nativeElement.click();
     fixture.detectChanges();
     expect(phase()).toBe('out');
@@ -57,7 +58,7 @@ describe('IntroComponent', () => {
   });
 
   it('Esc também pula a cena', async () => {
-    await create();
+    create();
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     fixture.detectChanges();
     expect(phase()).toBe('out');
@@ -65,12 +66,12 @@ describe('IntroComponent', () => {
 
   it('com movimento reduzido termina imediatamente', async () => {
     mediaState.reducedMotion = true;
-    await create();
+    create();
     expect(done).toHaveBeenCalledTimes(1);
   });
 
   it('cancela os timers ao ser destruído', async () => {
-    await create();
+    create();
     fixture.destroy();
     vi.advanceTimersByTime(20000);
     expect(done).not.toHaveBeenCalled();
