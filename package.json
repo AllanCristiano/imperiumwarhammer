@@ -26,9 +26,11 @@
     "@angular/cli": "^22.2.7",
     "@angular/compiler-cli": "^22.2.0",
     "gifenc": "^1.0.3",
+    "jsdom": "^31.0.1",
     "pngjs": "^7.0.0",
     "prettier": "^3.8.1",
     "puppeteer-core": "^25.17.0",
-    "typescript": "~6.0.2"
+    "typescript": "~6.0.2",
+    "vitest": "^4.1.12"
   }
 }
